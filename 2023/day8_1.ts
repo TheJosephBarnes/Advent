@@ -13,21 +13,17 @@ const readMap = (input) => {
             right,
         };
     });
-    // console.log(map);
 
     let moves = 0;
     let place = map.map(a => a.location).indexOf('AAA');
     while (map[place].location !== 'ZZZ') {
-        // console.log(`now at - `, map[place]);
         const destination = map[place][instructions[moves%instructions.length]];
-        // console.log(`  go ${instructions[moves%instructions.length]} to - `, destination);
         let next = map.map(a => a.location).slice(place, map.length).indexOf(destination);
         if (next === -1) {
             next = map.map(a => a.location).indexOf(destination);
         } else {
             next += place;
         }
-        // console.log(`    index of next ${next}`);
         place = next;
         moves++;
     }
