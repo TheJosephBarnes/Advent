@@ -81,14 +81,11 @@ const mapLongest = (input) => {
 
     while (nextLocations.length > 0) {
         longest = nextLocations.map(a => a.steps).sort().at(-1);
-        // console.log(grid.map(a => a.map(b => b.steps).join('')).join('\n'));
         nextLocations = nextLocations.map(a => getBranches(a, grid)).flat();
     }
-
-
 
     return longest;
 }
 
 console.log(mapLongest(testInput2));
-console.log(mapLongest(input));
+console.log(mapLongest(testInput));
