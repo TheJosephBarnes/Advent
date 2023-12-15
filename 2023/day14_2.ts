@@ -5,7 +5,6 @@ let startTime = Date.now();
 const spinGrid = (grid, direction = "right") => {
     let height = grid.length;
     let width = grid[0].length;
-    // let newGrid = new Array(width).fill(new Array(height));
     let newGrid = [];
     for(var y = 0; y < height; y++) {
         for(var x = 0; x < width; x++) {
@@ -53,9 +52,40 @@ const weighRocks = (grid) => {
 }
 
 const tiltMap = (input) => {
-    let grid = spinGrid(input.split('\n').map(row => row.split('')), "left");
-    grid = spinGrid(moveRocks(grid), "right");
-    return weighRocks(grid);
+    let grid = input.split('\n').map(row => row.split(''));
+    // "left" is our north, so spin once 
+    let startGrid = spinGrid(grid, "left");
+    
+    let repeatCheck = [startGrid];
+    let repeatIndex = 0;
+    let cycles = 0;
+
+    for (cycles = 0; cycles < 1000000 && repeatIndex === 0; cycles++) {
+        let newGrid = startGrid;
+        //one spin in every direction per cycle
+        for (let n = 0; n < 4; n++) {
+            // tilt / move the rocks, then spin
+            let shifted = moveRocks(newGrid);
+            newGrid = spinGrid(shifted, "right");
+        }
+
+        let repeatCheckIndex = repeatCheck.map(g => g.toString()).indexOf(newGrid.toString());
+        if (repeatCheckIndex >= 0) {
+            repeatIndex = repeatCheckIndex;
+        } else {
+            repeatCheck.push(newGrid);
+        }
+        startGrid = newGrid;
+    }
+
+    startGrid = spinGrid(startGrid, "right");
+    
+
+    // why -2 ??
+    let finalPlace = (1000000 - repeatIndex + 1)%(cycles - repeatIndex) - 3;
+    let finalGrid = repeatCheck.slice(repeatIndex)[finalPlace];
+    console.log(`${cycles} cycles in, repeat index ${repeatIndex} - final place ${finalPlace}`);
+    return weighRocks(spinGrid(finalGrid, "right"))
 }
 
 console.log(tiltMap(testInput));
